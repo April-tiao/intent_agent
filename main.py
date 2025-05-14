@@ -6,9 +6,10 @@ from agent import detect_cleanup_intent
 
 app = FastAPI()
 
+# 修改字段名以匹配入参结构
 class InputData(BaseModel):
-    input_q: str
-    session_id: str
+    content: str
+    sessionId: str
 
 @app.get("/")
 async def root():
@@ -16,17 +17,14 @@ async def root():
 
 @app.post("/intent")
 async def handle_intent(data: InputData):
-    result = detect_cleanup_intent(data.session_id, data.input_q)
+    # 使用新的字段名
+    result = detect_cleanup_intent(data.sessionId, data.content)
 
     # 类型映射：1表示“清站”
     mapped_type = "1" if result["type"] == "CLEAR_PASSENGER" else "0"
 
     return {
         "message": result["message"],
-        "sessionId": data.session_id,
+        "sessionId": data.sessionId,
         "type": mapped_type
     }
-
-
-
-
